@@ -54,7 +54,7 @@
   </div>
 
 
-  <div fxFlex>
+  <div fxFlex *ngIf="leader">
     <h2>Corporate Leadership</h2>
     <mat-list>
         <mat-list-item *ngFor="let lead of leader">
@@ -64,5 +64,8 @@
             <p mat-line>{{lead.description}}</p>
         </mat-list-item>
     </mat-list>
+  </div>
+  <div [hidden]="leader">
+    <mat-spinner></mat-spinner><h4>Loading . . . Please Wait</h4>
   </div>
 </div>
