@@ -13,6 +13,7 @@ export class MenuComponent implements OnInit {
 
   dishes : Dish[] = DISHES;
   selectedDish : Dish | any;
+  errMess: string = "";
 
   constructor(private dishService: DishService,
               @Inject('baseURL') private baseURL: any) { }
@@ -22,7 +23,8 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
     this.dishService.getDishes()
     .subscribe(
-      dishes => this.dishes = dishes
+      dishes => this.dishes = dishes,
+      errmsg => this.errMess = <any>errmsg
     );
   }
 

@@ -21,6 +21,8 @@ export class DishdetailComponent implements OnInit {
   rating :  number = 5;
   comment : Comment = new Comment();
 
+  dishErrMess: string = "";
+
   CommentForm: FormGroup | any;
 
 
@@ -59,13 +61,15 @@ export class DishdetailComponent implements OnInit {
   ngOnInit(): void {
     this.dishservice.getDishIds()
     .subscribe(dishIds => 
-      this.dishIds = dishIds
+      this.dishIds = dishIds,
+      dishErrmsg => this.dishErrMess = dishErrmsg
     );
     this.route.params.pipe(switchMap((param : Params) => this.dishservice.getDish(param['id'])))    
      .subscribe(dish => {
       this.dish = dish;
       this.setPrevNext(dish.id);
-     });
+     },
+     dishErrmsg => this.dishErrMess = dishErrmsg);
   }
 
   setPrevNext(dishID : string){
