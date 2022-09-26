@@ -1,7 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
-import { flyInOut } from '../animations/app.animation';
+import { flyInOut, expand } from '../animations/app.animation';
+import { FeedbackService } from '../services/feedback.service';
+import { delay } from 'rxjs';
+import { animate,  } from '@angular/animations';
 
 @Component({
   selector: 'app-contact',
@@ -12,14 +15,18 @@ import { flyInOut } from '../animations/app.animation';
     'style': 'display: block;'
     },
     animations: [
-      flyInOut()
+      flyInOut(),
+      expand()
     ]
 })
 export class ContactComponent implements OnInit {
 
   feedbackForm: FormGroup | any;
-  feedback : Feedback = new Feedback();
+  feedback : Feedback | any; //= new Feedback();
+  feedbackCopy : Feedback | any;//=  new Feedback();
   contactType = ContactType;
+  showResponse : boolean = false;
+  showSpinner : boolean = false;
 
 
   formErrors : any = {
@@ -28,6 +35,8 @@ export class ContactComponent implements OnInit {
     'telnum': '',
     'email': ''
   };
+
+  feedbackErrMsg :  String = "";
 
 
   validationMessages : any = {
@@ -56,7 +65,8 @@ export class ContactComponent implements OnInit {
 
   @ViewChild('fform') feedbackFormDirective : any;
 
-  constructor(private fb: FormBuilder) { 
+  constructor(private fb: FormBuilder,
+      private feedbackService: FeedbackService) { 
     this.createForm();
   }
 
@@ -105,7 +115,24 @@ export class ContactComponent implements OnInit {
 
   onSubmit() {
     this.feedback = this.feedbackForm.value;
-    console.log(this.feedback);
+    this.showSpinner =  true;
+    this.feedbackService.submitFeedback(this.feedback)
+    .subscribe(feedback =>{
+      this.feedback = feedback;
+      this.feedbackCopy = feedback;
+      this.showSpinner = false;
+      this.showResponse =  true;
+      setTimeout(()=> {
+        this.showResponse = false
+      },
+        5000
+      )
+    },
+    errMes =>{
+      this.feedback = null;
+      this.feedbackCopy = null;
+      this.feedbackErrMsg = <any>errMes;
+    })
     this.feedbackForm.reset({
       firstname: '',
       lastname: '',

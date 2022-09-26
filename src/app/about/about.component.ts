@@ -23,11 +23,12 @@ export class AboutComponent implements OnInit {
   constructor(private leaderService : LeaderService, @Inject('baseURL') private baseURL: any) { }
 
   BaseURL : any = this.baseURL;
-  
+  leadErrorMsg : String = "";
   ngOnInit(): void {
     this.leaderService.getLeaders()
     .subscribe(
-      leader => this.leader = leader
+      leader => {this.leader = leader},
+      leadErrmsg => {this.leadErrorMsg = <any>leadErrmsg}
     );
     console.log(this.leader);
   }
